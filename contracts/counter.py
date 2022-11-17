@@ -27,7 +27,7 @@ def approval_program():
     # Can either be increment or decrement call, specified by first tx argument
     # Note that we do not check for the sender id here -> Anyone can increment or decrement the counter
     on_counter_event = Cond(
-        # Called when op message is dec
+        # Called when op message is dec, fails if current counter value is zero, since algorand ints are uints
         [Txn.application_args[0] == dec_op, Seq(
             # Decrement the counter
             App.globalPut(counter_key, App.globalGet(counter_key) - Int(1)),
@@ -36,7 +36,7 @@ def approval_program():
         # Called when op message is inc
         [Txn.application_args[0] == inc_op, Seq(
             # Increment the counter
-            App.globalPut(counter_key, App.globalGet(counter_key) - Int(1)),
+            App.globalPut(counter_key, App.globalGet(counter_key) + Int(1)),
             Approve()
         )]
     )
@@ -64,10 +64,10 @@ if __name__ == "__main__":
     os.makedirs("build", exist_ok=True)
     approval_file = "build/counter_approval.teal"
     with open(approval_file, "w") as f:
-        compiled = compileTeal(approval_program(), mode=Mode.Application, version=7)
+        compiled = compileTeal(approval_program(), mode=Mode.Application, version=5)
         f.write(compiled)
 
     clear_state_file = "build/counter_clear_state.teal"
     with open(clear_state_file, "w") as f:
-        compiled = compileTeal(clear_state_program(), mode=Mode.Application, version=7)
+        compiled = compileTeal(clear_state_program(), mode=Mode.Application, version=5)
         f.write(compiled)
