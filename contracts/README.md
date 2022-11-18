@@ -81,6 +81,7 @@ python counter.py
 This should create the build directory containing the following files: 
 - *counter_approval.teal*: Complied TEAL code of the approval program of the counter smart contract
 - *counter_clear_state.teal*: Compiled TEAL code of the clear state program of the counter smart contract
+This process is equivalent for the other examples.
 After compilation, we can deploy the smart contracts.
 First we need to enter the sanbox algod environment by running in at the root of the sanbox repository:
 ``` bash
@@ -89,5 +90,16 @@ First we need to enter the sanbox algod environment by running in at the root of
 This should open a shell in the sanbox node docker container. In this shell we can use the *goal* CLI to interact with the sandbox Algorand node.
 You can find the goal documentation [here](https://developer.algorand.org/docs/clis/goal/goal).
 
+The sanbox already containes some accounts we can use. You can list the available accounts running:
+``` bash
+goal account list
+```
+The output should look something like this:
+
+```
+[offline]	KWN5SMTE6PFAF65XYX7GYGEBXWMWSOS62FFDCUUTNJTJEX5T5KUXCMR24Q KWN5SMTE6PFAF65XYX7GYGEBXWMWSOS62FFDCUUTNJTJEX5T5KUXCMR24Q	1000225013863741 microAlgos
+[online]	K6GMKGWDZGHNVXLYLWSKBNUJCXISL5E43BVEZYTIRS34YZB2PPZLDJUVQ4	K6GMKGWDZGHNVXLYLWSKBNUJCXISL5E43BVEZYTIRS34YZB2PPZLDJUVQ4	4000900004499000 microAlgos
+[offline]	QSJE4OUVVJQKKO5WSOTY5OA6HV3ITG3OCYFOLPZGQJIJNUXKDQTEXCOS4E	QSJE4OUVVJQKKO5WSOTY5OA6HV3ITG3OCYFOLPZGQJIJNUXKDQTEXCOS4E	4000900000000000 microAlgos
+```
 
 
