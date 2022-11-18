@@ -3,6 +3,7 @@ from pyteal import *
 import os
 
 # Keys
+# We define the keys outside of the context op approval_program since we need them in clear_state_program as well
 registration_begin = Bytes("reg_bgn")
 registration_end = Bytes("reg_end")
 vote_begin = Bytes("vote_bgn")
@@ -47,6 +48,7 @@ def approval_program():
             Global.round() <= App.globalGet(vote_end)
         )),
         # Check if account already has voted
+        # Note: get_sender_vote has to be called before hasValue() can be used on it. This is required by Appl.localGetEx
         get_sender_vote,
         Assert(Not(get_sender_vote.hasValue())),
 
@@ -55,14 +57,12 @@ def approval_program():
             [Txn.application_args[0] == yes_vote, App.globalPut(vote_count_yes, App.globalGet(vote_count_yes) + Int(1))],
             [Txn.application_args[0] == no_vote, App.globalPut(vote_count_no, App.globalGet(vote_count_no) + Int(1))]
         ),
-        # Set the has_voted field to the sender's vote, to make sure account cannot vote again
+        # Set the has_voted field to the sender's vote, to make sure an account cannot vote again
         App.localPut(Txn.sender(), has_voted, Txn.application_args[0]),
         Approve()
     )
-    # We use the close out call to reverse an accounts vote
+    # We use the close out call to retract an accounts vote
     # This is only possible during the voting period, afterwards the accounts vote is immutable
-
-
     on_close_out =  Seq(
             Assert(Global.round() <= App.globalGet(vote_end)),
             get_sender_vote,
@@ -84,6 +84,7 @@ def approval_program():
     )
 
 
+# The clear state program can also be used to retract an accounts vote. The logic is the same as for the close out call.
 def clear_state_program():
     get_sender_vote = App.localGetEx(Txn.sender(), App.id(), has_voted)
 
@@ -100,7 +101,7 @@ def clear_state_program():
 
 
 
-# Compiles PyTEAL code to TEAL, teal files are placed into ./build
+# Compiles PyTEAL code to TEAL, .teal files are placed into ./build
 if __name__ == "__main__":
     os.makedirs("build", exist_ok=True)
     approval_file = "build/voting_approval.teal"

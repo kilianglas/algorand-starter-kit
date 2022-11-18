@@ -17,13 +17,18 @@ def approval_program():
     )
 
     on_withdraw = Seq(
-        # We asset that the calling account is the account that is allowed to withdraw the money
-        # and that the latest timestamp is larger than the withdraw start time
+        # We check if the calling account is the account that is allowed to withdraw the Algos
+        # and if the latest timestamp is larger than the withdraw start time
         Assert(And(
             Txn.sender() == App.globalGet(withdraw_account_key),
             Global.latest_timestamp() >= App.globalGet(withdraw_time_key),
             Txn.application_args.length() == Int(1),
         )),
+        # In order to send the Algos to the calling account, we need to issue an inner payment transaction.
+        # This can be done using the InnerTxnBuilder class.
+        # We set the type of the inner transaction to payment. The amount field of the transaction is set
+        # to the desired withdraw amount passed to the app call via the first argument. The receiver of the
+        # payment is the withdraw account.
         InnerTxnBuilder.Begin(),
         InnerTxnBuilder.SetFields(
             {
@@ -37,12 +42,15 @@ def approval_program():
         )
 
     on_delete =  Seq(
-        # We asset that the calling account is the account that is allowed to withdraw the money
-        # and that the latest timestamp is larger than the withdraw start time
+        # Again, we check if the calling account is the account that is allowed to withdraw the Algos
+        # and if the latest timestamp is larger than the withdraw start time
         Assert(And(
             Txn.sender() == App.globalGet(withdraw_account_key),
             Global.latest_timestamp() >= App.globalGet(withdraw_time_key),
         )),
+        # Again we use an inner transaction to send the remaining balance to the withdraw account.
+        # Algorand provides a special field in payment transactions (close_remainder_to) that can be
+        # used to transfer the remaining account balance to a specific account when an account is deleted
         InnerTxnBuilder.Begin(),
         InnerTxnBuilder.SetFields(
             {
@@ -63,10 +71,11 @@ def approval_program():
         [Txn.on_completion() == OnComplete.NoOp, on_withdraw], # Event handler
     )
 
+# Clear state program does nothing since app does not use local state
 def clear_state_program():
     return Approve()
 
-# Compiles PyTEAL code to TEAL, teal files are placed into ./build
+# Compiles PyTEAL code to TEAL, .teal files are placed into ./build
 if __name__ == "__main__":
     os.makedirs("build", exist_ok=True)
     approval_file = "build/withdraw_approval.teal"

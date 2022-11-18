@@ -3,7 +3,6 @@
 This directory contains some basic PyTEAL smart contract examples.
 The contracts can be deployed to e.g. the sandbox environment to get a feeling on how interaction with smart contracts works on Algorand.
 
-
 ## Setup
 Before you can actually play around with the simple examples, we need to setup our working environment. Since we're going to work with Python, install
 
@@ -25,13 +24,12 @@ And install the requirements:
 pip install -r requirements.txt
 ```
 ### Setup Sandbox
-The next thing we need is the Algorand sanbox. 
-Clone the sanbox repository:
+Clone the sandbox repository:
 ```bash
 git clone https://github.com/algorand/sandbox.git
 ```
-Next we need to make the examples in this directory available to the sanbox docker container.
-To do so, we need to add a volume to the docker-compose.yml located at the root of the *sanbox repo*.
+Next we need to make the examples in this directory available to the sandbox docker container.
+To do so, we need to add a volume to the docker-compose.yml located at the root of the *sandbox repo*.
 The volume has to be added to the *algod* service, e.g. below the ports section:
 
 ``` yaml
@@ -40,7 +38,7 @@ volumes:
       - source: path/to/this/dir 
       - target: /data
 ```
-Subsitute *path/to/this/dir* with the path to this directory (on your machine).
+Substitute *path/to/this/dir* with the path to this directory (on your machine).
 Afterwards, the complete file should look something like this:
 
 ``` yaml
@@ -73,16 +71,16 @@ services:
       - source: /home/username/algorand-starter-kit/contracts
       - target: /data
 ```
-The sanbox can be controlled by using the *sanbox* executable located at the root of the sanbox project.
-To start the sanbox run:
+The sandbox can be controlled by using the *sandbox* executable located at the root of the sandbox project.
+To start the sandbox run:
 ```
-./sanbox up -v
+./sandbox up -v
 ```
-This should start the sanbox docker containers.
+This should start the sandbox docker containers.
 
 ## Compiling and Deploying the Examples
 Running the examples will compile the contained smart contracts and write the corresponding .teal files to the *build* directory.
-E.g. to complie the counter exmple run:
+E.g. to compile the counter example run:
 ``` bash
 python counter.py
 ```
@@ -91,14 +89,14 @@ This should create the build directory containing the following files:
 - *counter_clear_state.teal*: Compiled TEAL code of the clear state program of the counter smart contract
 This process is equivalent for the other examples.
 After compilation, we can deploy the smart contracts.
-First we need to enter the sanbox algod environment by running in at the root of the sanbox repository:
+First, we need to enter the sandbox algod environment by running in at the root of the sandbox repository:
 ``` bash
 ./sanbox enter algod
 ```
-This should open a shell in the sanbox node docker container. In this shell we can use the *goal* CLI to interact with the sandbox Algorand node.
+This should open a shell in the sandbox node docker container. In this shell we can use the *goal* CLI to interact with the sandbox Algorand node.
 You can find the goal documentation [here](https://developer.algorand.org/docs/clis/goal/goal).
 
-The sanbox already containes some accounts we can use. You can list the available accounts running:
+The sandbox already contains some accounts we can use. You can list the available accounts running:
 ``` bash
 goal account list
 ```
@@ -119,16 +117,16 @@ ACC_C=QSJE4OUVVJQKKO5WSOTY5OA6HV3ITG3OCYFOLPZGQJIJNUXKDQTEXCOS4E
 The following subsections contain instructions on how to deploy and call the individual examples.
 
 #### Counter
-The counter example contains a smart contracts that maintains a simple coutner that can be incremented or decremented by submiting corresponding application call
+The counter example contains a smart contracts that maintains a simple counter that can be incremented or decremented by submitting corresponding application call
 transactions. Furthermore, the app can be deleted by the account that has created it. 
-First we need to deploy the counter smart contract by using the app create command: 
+First, we need to deploy the counter smart contract by using the app create command: 
 ``` bash
 goal app create --creator $ACC_[A|B|C] --approval-prog /data/build/counter_approval.teal --clear-prog /data/build/counter_clear_state.teal --global-byteslices 1 --global-ints 1 --local-byteslices 0 --local-ints 0
 ```
 The --creator option specifies the creator account of the smart contract, i.e. the sender of the application transaction. The --approval-prog and --clear-prog options pass
 the files containing the code of the smart contract, i.e. the compiled approval and clear state programs. The remaining options specify the fields of the state used by the
-smart contract. In the counter example, two fields are used. An integer field for the counter and a byteslice field for the owner address. Local state is not used.
-This ouput should look something like this:
+smart contract. In the counter example, two fields are used. An integer field for the counter and a byte slice field for the owner address. Local state is not used.
+This output should look something like this:
 ``` 
 Transaction LFFZZJY3MYKSGDJ7DLNAASB3D6OVUOTKBQF4TITRC5E3QYZM64AQ still pending as of round 100
 Transaction LFFZZJY3MYKSGDJ7DLNAASB3D6OVUOTKBQF4TITRC5E3QYZM64AQ still pending as of round 101 
@@ -139,12 +137,12 @@ Created app with app index 1
 ``` bash
 goal account list
 ```
-After the app has been deployed, you can get information about the app by running (replace <APP_ID> by the correct app id, e.g. 1 for the output depicted above):
+After the app has been deployed, you can get information about the app by running (replace <APP_ID> by the correct app ID, e.g. 1 for the output depicted above):
 
 ``` bash
 goal app info --app-id <APP_ID> 
 ```
-You can read the global state of the app using goal, as well:
+You can read the global state of the app using goal as well:
 
 ``` bash
 goal app read --app-id <APP_ID> --global
@@ -161,12 +159,12 @@ Right after the deployment, this should ouptut something like this:
     "tt": 1
   }
 ```
-Note that the counter value is not diplayed. This is the case because the counter is initialized to 0. Once the value changes, it will be shown.
+Note that the counter value is not displayed. This is the case because the counter is initialized to 0. Once the value changes, it will be shown.
 Now we want to increment the counter by issuing an application call transaction. To do so, run:
 ``` bash
-goal app call --from $ACC_A --app-id <APP_ID> --app-arg "str:inc"
+goal app call --from $ACC_[A|B|C] --app-id <APP_ID> --app-arg "str:inc"
 ```
-The --from option again specifies the sender account. You could also use ACC_B or ACC_C here. The --app-arg option is used to pass an argument to the app call. In our
+The --from option again specifies the sender account. The --app-arg option is used to pass an argument to the app call. In our
 case, this can either be "inc" or "dec", to increment or decrement the counter, respectively. The "str:" prefix specifies the type of the argument, which is string in our case.
 Running another
 
@@ -192,7 +190,7 @@ goal app call --from $ACC_[A|B|C] --app-id <APP_ID> --app-arg "str:dec"
 
 ### Voting
 
-The voting smart contract allows to perform a simple decentralized binary voting. The app keeps track of two counters, one for "yes" and one for "no" votes. In order to
+The voting smart contract implements a simple decentralized binary voting. The app keeps track of two counters, one for "yes" and one for "no" votes. In order to
 participate in the voting, accounts need to register during a registration period. This can be done by opting into the application. After the registration period, the voting period
 starts. Each registered account is allowed to submit at most one vote. We ensure this by application specific local state of the registered accounts. 
 Note that we use (consensus) rounds, instead of block, timestamps to specify the registration and voting period in this example.
@@ -201,7 +199,7 @@ The voting app can be deployed by running:
 ``` bash
 goal app create --creator $ACC_[A|B|C] --approval-prog /data/build/voting_approval.teal --clear-prog /data/build/voting_clear_state.teal --global-byteslices 0 --global-ints 6 --local-byteslices 1 --local-ints 0 --app-arg "int:<REG_BGN>" --app-arg "int:<REG_END>" --app-arg "int:<VOTE_BGN>" --app-arg "int:<VOTE_END>"
 ```
-The application arguments are used to pass in the begin and end rounds of the registration and voting periods. You can obtain the current consensus round of the sanbox
+The application arguments are used to pass in the begin and end rounds of the registration and voting periods. You can obtain the current consensus round of the sandbox
 node by running:
 ``` bash
 goal node lastround
@@ -214,16 +212,16 @@ After the start of the voting period, registered accounts can vote "yes" or "no"
 ``` bash
 goal app call --from $ACC_[A|B|C] --app_id <APP_ID> --app-arg "str:[yes|no]"
 ```
-Voters can revert their retract their vote by either submiting a close out or clear state call:
+Voters can retract their vote by either submitting a close out or clear state call:
 ``` bash
 goal app clear --app-id <APP_ACC> --from $ACC_[A|B|C]
 ```
 
 ### Withdraw
 
-The withdraw example is intended to demostrate the process of sending Algos to and from a smart contract. The example app holds the address of a specific account that is 
-allowed to withdraw all Algos sent to the app account after a specified point in time. The account is also allowed to delete the app, which transfers the balance of the app the
-time of deletion to the account. Everyone is allowed to send Algos to the app. Note that the process of sending Algos to the app is not implemented as part of the smart 
+The withdraw example is intended to demonstrate the process of sending Algos to and from a smart contract. The example app holds the address of a specific account that is 
+allowed to withdraw all Algos sent to the app account after a specified point in time. The account is also allowed to delete the app, which transfers the current balance of the app account
+ to the account. Everyone is allowed to send Algos to the app. Note that the process of sending Algos to the app is not implemented as part of the smart 
 contract logic, but is a primitive provided by Algorand.
 
 Deploy the app by running:
@@ -240,17 +238,17 @@ This outputs the application account together with some other information. Copy 
 ``` bash
 APP_ACC=XIBF2HUZXFM6NONRNMIZTN2NFJTXL35ECO5DR25S73RGVH6KUJX67GLTOU
 ```
-Now we can send Algos from one of the sanbox accounts:
+Now we can send Algos from one of the sandbox accounts:
 
 ``` bash
 goal clerk send --amount 1000000 --from $ACC_[A|B|C] --to $APP_ACC
 ```
 The withdraw account can call the app to withdraw the current balance of the app (after the withdraw time): 
 ``` bash
-goal app call --app-id <APP_ID> --from <WITHDRAW_ACC>
+goal app call --app-id <APP_ID> --from <WITHDRAW_ACC> --app-arg "int:<AMOUNT>"
 ```
-or withdraw the balance and delete the app:
-
+The app argument is used to specify the amount of Algos that should be withdrawn.
+It is also possible to withdraw the remaining balance and delete the app:
 ``` bash
 goal app delete --app-id <APP_ID> --from <WITHDRAW_ACC>
 ```

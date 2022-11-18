@@ -2,16 +2,17 @@
 from pyteal import *
 import os
 
-# Keys for the global key-value state of the smart contract
-# Convenient to define keys here s.t. they can be reused when needed
-owner_key = Bytes("owner")
-counter_key = Bytes("counter")
-
-# Operation messages
-inc_op = Bytes("inc")
-dec_op = Bytes("dec")
-
 def approval_program():
+    # Keys for the global key-value state of the smart contract
+    # Convenient to define keys here s.t. they can be reused when needed
+    owner_key = Bytes("owner")
+    counter_key = Bytes("counter")
+
+    # Operation messages
+    inc_op = Bytes("inc")
+    dec_op = Bytes("dec")
+
+
     # Initialization
     on_creation = Seq(
         # Set owner to sender of initial tx
@@ -59,7 +60,7 @@ def approval_program():
 def clear_state_program():
     return Approve()
 
-# Compiles PyTEAL code to TEAL, teal files are placed into ./build
+# Compiles PyTEAL code to TEAL, .teal files are placed into ./build
 if __name__ == "__main__":
     os.makedirs("build", exist_ok=True)
     approval_file = "build/counter_approval.teal"
