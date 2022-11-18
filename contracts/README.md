@@ -182,3 +182,67 @@ You can decrement the counter by running:
 goal app call --from $ACC_A --app-id <APP_ID> --app-arg "str:dec"
 ```
 
+### Voting
+
+The voting smart contract allows to perform a simple decentralized binary voting. The app keeps track of two counters, one for "yes" and one for "no" votes. In order to
+participate in the voting, accounts need to register during a registration period. This can be done by opting into the application. After the registration period, the voting period
+starts. Each registered account is allowed to submit at most one vote. We ensure this by application specific local state of the registered accounts. 
+Note that we use (consensus) rounds, instead of block, timestamps to specify the registration and voting period in this example.
+
+The voting app can be deployed by running:
+``` bash
+goal app create --creator $ACC_A --approval-prog /data/build/voting_approval.teal --clear-prog /data/build/voting_clear_state.teal --global-byteslices 0 --global-ints 6 --local-byteslices 1 --local-ints 0 --app-arg "int:<REG_BGN>" --app-arg "int:<REG_END>" --app-arg "int:<VOTE_BGN>" --app-arg "int:<VOTE_END>"
+```
+The application arguments are used to pass in the begin and end rounds of the registration and voting periods. You can obtain the current consensus round of the sanbox
+node by running:
+``` bash
+goal node lastround
+```
+In order to register (opt in), run:
+``` bash
+goal app optin --app-id <APP_ID> --from $ACC_[A|B|C]
+```
+After the start of the voting period, registered accounts can vote "yes" or "no" using:
+``` bash
+goal app call --from $ACC_[A|B|C] --app_id <APP_ID> --app-arg "str:[yes|no]"
+```
+Voters can revert their retract their vote by either submiting a close out or clear state call:
+``` bash
+goal app clear --app-id <APP_ACC> --from $ACC_[A|B|C]
+```
+
+### Withdraw
+
+The withdraw example is intended to demostrate the process of sending Algos to and from a smart contract. The example app holds the address of a specific account that is 
+allowed to withdraw all Algos sent to the app account after a specified point in time. The account is also allowed to delete the app, which transfers the balance of the app the
+time of deletion to the account. Everyone is allowed to send Algos to the app. Note that the process of sending Algos to the app is not implemented as part of the smart 
+contract logic, but is a primitive provided by Algorand.
+
+Deploy the app by running:
+``` bash
+goal app create --creator $ACC_[A|B|C] --approval-prog /data/build/withdraw_approval.teal --clear-prog /data/build/withdraw_clear_state.teal --global-byteslices 1 --global-ints 1 --local-byteslices 0 --local-ints 0 --app-arg "int:<UNIX_TIME>" --app-account $ACC_[A|B|C]
+```
+Note that we use the app accounts array (--app-account option) to pass the withdraw account to the app. Take a look at the documentation [here](https://developer.algorand.org/docs/get-details/dapps/smart-contracts/apps/) for more details on this. The app argument is the withdraw time (unix time). 
+Accounts can send Algos to the app using goal. In order to submit payment transaction, we first need to lookup the address of the app. This can be done using:
+``` bash
+goal app info --app-id <APP_ID>
+```
+This outputs the application account together with some other information. Copy the address to a environment variable, e.g.:
+
+``` bash
+APP_ACC=XIBF2HUZXFM6NONRNMIZTN2NFJTXL35ECO5DR25S73RGVH6KUJX67GLTOU
+```
+Now we can send Algos from one of the sanbox accounts:
+
+``` bash
+goal clerk send --amount 1000000 --from $ACC_[A|B|C] --to $APP_ACC
+```
+The withdraw account can call the app to withdraw the current balance of the app (after the withdraw time): 
+``` bash
+goal app call --app-id <APP_ID> --from <WITHDRAW_ACC>
+```
+or withdraw the balance and delete the app:
+
+``` bash
+goal app delete --app-id <APP_ID> --from <WITHDRAW_ACC>
+```
