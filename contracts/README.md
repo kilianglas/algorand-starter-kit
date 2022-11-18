@@ -97,9 +97,88 @@ goal account list
 The output should look something like this:
 
 ```
-[offline]	KWN5SMTE6PFAF65XYX7GYGEBXWMWSOS62FFDCUUTNJTJEX5T5KUXCMR24Q KWN5SMTE6PFAF65XYX7GYGEBXWMWSOS62FFDCUUTNJTJEX5T5KUXCMR24Q	1000225013863741 microAlgos
+[offline]	KWN5SMTE6PFAF65XYX7GYGEBXWMWSOS62FFDCUUTNJTJEX5T5KUXCMR24Q	KWN5SMTE6PFAF65XYX7GYGEBXWMWSOS62FFDCUUTNJTJEX5T5KUXCMR24Q	1000225013863741 microAlgos
 [online]	K6GMKGWDZGHNVXLYLWSKBNUJCXISL5E43BVEZYTIRS34YZB2PPZLDJUVQ4	K6GMKGWDZGHNVXLYLWSKBNUJCXISL5E43BVEZYTIRS34YZB2PPZLDJUVQ4	4000900004499000 microAlgos
 [offline]	QSJE4OUVVJQKKO5WSOTY5OA6HV3ITG3OCYFOLPZGQJIJNUXKDQTEXCOS4E	QSJE4OUVVJQKKO5WSOTY5OA6HV3ITG3OCYFOLPZGQJIJNUXKDQTEXCOS4E	4000900000000000 microAlgos
 ```
+We will need the account addresses to play around with the deployed smart contracts, so copy them and store them in corresponding environment variables. E.g.:
 
+``` bash
+ACC_A=KWN5SMTE6PFAF65XYX7GYGEBXWMWSOS62FFDCUUTNJTJEX5T5KUXCMR24Q
+ACC_B=K6GMKGWDZGHNVXLYLWSKBNUJCXISL5E43BVEZYTIRS34YZB2PPZLDJUVQ4
+ACC_C=QSJE4OUVVJQKKO5WSOTY5OA6HV3ITG3OCYFOLPZGQJIJNUXKDQTEXCOS4E
+```
+The following subsections contain instructions on how to deploy and call the individual examples.
+
+#### Counter
+The counter example contains a smart contracts that maintains a simple coutner that can be incremented or decremented by submiting corresponding application call
+transactions. Furthermore, the app can be deleted by the account that has created it. 
+First we need to deploy the counter smart contract by using the app create command: 
+``` bash
+goal app create --creator $ACC_A --approval-prog /data/build/counter_approval.teal --clear-prog /data/build/counter_clear_state.teal --global-byteslices 1 --global-ints 1 --local-byteslices 0 --local-ints 0
+```
+The --creator option specifies the creator account of the smart contract, i.e. the sender of the application transaction. The --approval-prog and --clear-prog options pass
+the files containing the code of the smart contract, i.e. the compiled approval and clear state programs. The remaining options specify the fields of the state used by the
+smart contract. In the counter example, two fields are used. An integer field for the counter and a byteslice field for the owner address. Local state is not used.
+This ouput should look something like this:
+``` 
+Transaction LFFZZJY3MYKSGDJ7DLNAASB3D6OVUOTKBQF4TITRC5E3QYZM64AQ still pending as of round 100
+Transaction LFFZZJY3MYKSGDJ7DLNAASB3D6OVUOTKBQF4TITRC5E3QYZM64AQ still pending as of round 101 
+Transaction LFFZZJY3MYKSGDJ7DLNAASB3D6OVUOTKBQF4TITRC5E3QYZM64AQ committed in round 102
+Created app with app index 1 
+```
+*Important*: You need to remember the app index, since this index is required in order to interact with the app. You can look up the apps create by accounts by running:
+``` bash
+goal account list
+```
+After the app has been deployed, you can get information about the app by running (replace <APP_ID> by the correct app id, e.g. 1 for the output depicted above):
+
+``` bash
+goal app info --app-id <APP_ID> 
+```
+You can read the global state of the app using goal, as well:
+
+``` bash
+goal app read --app-id <APP_ID> --global
+```
+Right after the deployment, this should ouptut something like this:
+
+``` bash
+{
+  "counter": {
+    "tt": 2
+  },
+  "owner": {
+    "tb": "U\ufffd\ufffd2d\ufffd\ufffd\u0002\ufffd\ufffd\ufffd\ufffdl\u0018\ufffd\ufffd\ufffdi:^\ufffdJ1R\ufffdjf\ufffd_\ufffd\ufffd\ufffd",
+    "tt": 1
+  }
+```
+Note that the counter value is not diplayed. This is the case because the counter is initialized to 0. Once the value changes, it will be shown.
+Now we want to increment the counter by issuing an application call transaction. To do so, run:
+``` bash
+goal app call --from $ACC_A --app-id <APP_ID> --app-arg "str:inc"
+```
+The --from option again specifies the sender account. You could also use ACC_B or ACC_C here. The --app-arg option is used to pass an argument to the app call. In our
+case, this can either be "inc" or "dec", to increment or decrement the counter, respectively. The "str:" prefix specifies the type of the argument, which is string in our case.
+Running another
+
+``` bash
+goal app read --app-id <APP_ID> --global 
+```
+should now ouput 
+``` 
+{
+  "counter": {
+    "tt": 2,
+    "ui": 1
+  },
+  "owner": {
+    "tb": "U\ufffd\ufffd2d\ufffd\ufffd\u0002\ufffd\ufffd\ufffd\ufffdl\u0018\ufffd\ufffd\ufffdi:^\ufffdJ1R\ufffdjf\ufffd_\ufffd\ufffd\ufffd",
+    "tt": 1
+  }
+```
+You can decrement the counter by running:
+``` bash
+goal app call --from $ACC_A --app-id <APP_ID> --app-arg "str:dec"
+```
 
