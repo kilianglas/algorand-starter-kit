@@ -137,11 +137,11 @@ For development of SmartContracts we recommend using [PyTEAL](https://developer.
 
 The PyTEAL tutorial developer pages introduce an exemplary SmartContract usecase, an autonomous NFT auction. To support your understanding, we provide a set of simpler, less complex PyTEAL smart contract examples in this repository: 
 
-- [counter.py](master/contracts/counter.py): A simple counter that can be modified by calling the smart contract
-- [voting.py](master/contracts/voting.py): A simple voting application, that collects and displays votes
-- [withdraw.py](master/contracts/withdraw.py): A simple, conditional withdrawal logic
+- [counter.py](contracts/counter.py): A simple counter that can be modified by calling the smart contract
+- [voting.py](contracts/voting.py): A simple voting application, that collects and displays votes
+- [withdraw.py](contracts/withdraw.py): A simple, conditional withdrawal logic
 
-Checkout the [README](master/contracts/README.md) file contained in the contracts directory. It contains detailed instructions on how to setup the sanbox environment for and run the examples. 
+Checkout the [README](contracts/README.md) file contained in the contracts directory. It contains detailed instructions on how to setup the sanbox environment for and run the examples. 
 
 *Tip*: While reading the PyTEAL snippets, checkout python inline help for expressions (e.g. `Seq`, `Cond`, `Approve`, ...) to better understand coding examples.
 
@@ -185,11 +185,11 @@ If your hardware doesn't do the trick for you, approach us at the booth or in th
 
 ## FAQ
 
-### Where can i find the Algorand booth?
+### Where can I find the Algorand booth?
 
 The Algorand booth is located in the entrance area of the [FMI Magistrale](https://www.ph.tum.de/about/visit/roomfinder/?room=magistrale). Look around, you cannot miss us :)
 
-### Where can i find the Algorand HQ?
+### Where can I find the Algorand HQ?
 
 The Algorand Challenge HQ is located in room `00.08.059`:
 

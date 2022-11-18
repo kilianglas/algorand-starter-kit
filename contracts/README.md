@@ -1,6 +1,6 @@
 # Smart Contract Examples
 
-This dir contains some basic PyTEAL smart contract examples.
+This directory contains some basic PyTEAL smart contract examples.
 The contracts can be deployed to e.g. the sandbox environment to get a feeling on how interaction with smart contracts works on Algorand.
 
 
