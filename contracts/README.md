@@ -3,8 +3,16 @@
 This dir contains some basic PyTEAL smart contract examples.
 The contracts can be deployed to e.g. the sandbox environment to get a feeling on how interaction with smart contracts works on Algorand.
 
+
 ## Setup
-First setup a Python venv:
+Before you can actually play around with the simple examples, we need to setup our working environment. Since we're going to work with Python, install
+
+- Python 3.6 or higher
+- python-virtualenv (*virtualenv* in pip)
+
+Python virtualenv allows you to create a lightweight "*virtual environment*", which has an independent set of installed Python packages. If you're working in a venv, you don't need to touch your local Python package configuration to fulfill requirements.
+
+Now setup a Python venv:
 ```bash
 python -m venv venv
 ```
@@ -72,7 +80,7 @@ To start the sanbox run:
 ```
 This should start the sanbox docker containers.
 
-### Compiling and Deploying the Examples
+## Compiling and Deploying the Examples
 Running the examples will compile the contained smart contracts and write the corresponding .teal files to the *build* directory.
 E.g. to complie the counter exmple run:
 ``` bash
@@ -246,3 +254,4 @@ or withdraw the balance and delete the app:
 ``` bash
 goal app delete --app-id <APP_ID> --from <WITHDRAW_ACC>
 ```
+                         
