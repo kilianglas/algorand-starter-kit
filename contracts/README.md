@@ -86,8 +86,8 @@ First we need to enter the sanbox algod environment by running in at the root of
 ``` bash
 ./sanbox enter algod
 ```
-This should open a shell in the sanbox node docker container. In this shell we can use the *goal** CLI to interact with the sandbox Algorand node.
-You can find the goal documentation [[https://developer.algorand.org/docs/clis/goal/goal][here]].
+This should open a shell in the sanbox node docker container. In this shell we can use the *goal* CLI to interact with the sandbox Algorand node.
+You can find the goal documentation [here](https://developer.algorand.org/docs/clis/goal/goal).
 
 
 
