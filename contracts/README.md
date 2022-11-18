@@ -115,7 +115,7 @@ The counter example contains a smart contracts that maintains a simple coutner t
 transactions. Furthermore, the app can be deleted by the account that has created it. 
 First we need to deploy the counter smart contract by using the app create command: 
 ``` bash
-goal app create --creator $ACC_A --approval-prog /data/build/counter_approval.teal --clear-prog /data/build/counter_clear_state.teal --global-byteslices 1 --global-ints 1 --local-byteslices 0 --local-ints 0
+goal app create --creator $ACC_[A|B|C] --approval-prog /data/build/counter_approval.teal --clear-prog /data/build/counter_clear_state.teal --global-byteslices 1 --global-ints 1 --local-byteslices 0 --local-ints 0
 ```
 The --creator option specifies the creator account of the smart contract, i.e. the sender of the application transaction. The --approval-prog and --clear-prog options pass
 the files containing the code of the smart contract, i.e. the compiled approval and clear state programs. The remaining options specify the fields of the state used by the
@@ -179,7 +179,7 @@ should now ouput
 ```
 You can decrement the counter by running:
 ``` bash
-goal app call --from $ACC_A --app-id <APP_ID> --app-arg "str:dec"
+goal app call --from $ACC_[A|B|C] --app-id <APP_ID> --app-arg "str:dec"
 ```
 
 ### Voting
@@ -191,7 +191,7 @@ Note that we use (consensus) rounds, instead of block, timestamps to specify the
 
 The voting app can be deployed by running:
 ``` bash
-goal app create --creator $ACC_A --approval-prog /data/build/voting_approval.teal --clear-prog /data/build/voting_clear_state.teal --global-byteslices 0 --global-ints 6 --local-byteslices 1 --local-ints 0 --app-arg "int:<REG_BGN>" --app-arg "int:<REG_END>" --app-arg "int:<VOTE_BGN>" --app-arg "int:<VOTE_END>"
+goal app create --creator $ACC_[A|B|C] --approval-prog /data/build/voting_approval.teal --clear-prog /data/build/voting_clear_state.teal --global-byteslices 0 --global-ints 6 --local-byteslices 1 --local-ints 0 --app-arg "int:<REG_BGN>" --app-arg "int:<REG_END>" --app-arg "int:<VOTE_BGN>" --app-arg "int:<VOTE_END>"
 ```
 The application arguments are used to pass in the begin and end rounds of the registration and voting periods. You can obtain the current consensus round of the sanbox
 node by running:
