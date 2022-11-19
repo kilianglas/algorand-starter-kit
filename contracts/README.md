@@ -192,8 +192,8 @@ goal app call --from $ACC_[A|B|C] --app-id <APP_ID> --app-arg "str:dec"
 
 The voting smart contract implements a simple decentralized binary voting. The app keeps track of two counters, one for "yes" and one for "no" votes. In order to
 participate in the voting, accounts need to register during a registration period. This can be done by opting into the application. After the registration period, the voting period
-starts. Each registered account is allowed to submit at most one vote. We ensure this by application specific local state of the registered accounts. 
-Note that we use (consensus) rounds, instead of block, timestamps to specify the registration and voting period in this example.
+starts. Each registered account is allowed to submit at most one vote. We ensure this by using the application specific local state of the registered accounts. 
+Note that we use (consensus) rounds, instead of block timestamps, to specify the registration and voting period in this example.
 
 The voting app can be deployed by running:
 ``` bash
@@ -219,7 +219,7 @@ goal app clear --app-id <APP_ACC> --from $ACC_[A|B|C]
 
 ### Withdraw
 
-The withdraw example is intended to demonstrate the process of sending Algos to and from a smart contract. The example app holds the address of a specific account that is 
+The withdraw example is intended to demonstrate the process of sending Algos to and from a smart contract. The example app holds the address of a specific account, that is 
 allowed to withdraw all Algos sent to the app account after a specified point in time. The account is also allowed to delete the app, which transfers the current balance of the app account
  to the account. Everyone is allowed to send Algos to the app. Note that the process of sending Algos to the app is not implemented as part of the smart 
 contract logic, but is a primitive provided by Algorand.
