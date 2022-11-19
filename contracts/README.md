@@ -68,8 +68,8 @@ services:
       - ${CDT_PORT:-9392}:9392
     volumes:
       - type: bind
-      - source: /home/username/algorand-starter-kit/contracts
-      - target: /data
+        source: /home/username/algorand-starter-kit/contracts
+        target: /data
 ```
 The sandbox can be controlled by using the *sandbox* executable located at the root of the sandbox project.
 To start the sandbox run:
