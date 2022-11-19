@@ -91,7 +91,7 @@ This process is equivalent for the other examples.
 After compilation, we can deploy the smart contracts.
 First, we need to enter the sandbox algod environment by running in at the root of the sandbox repository:
 ``` bash
-./sanbox enter algod
+./sandbox enter algod
 ```
 This should open a shell in the sandbox node docker container. In this shell we can use the *goal* CLI to interact with the sandbox Algorand node.
 You can find the goal documentation [here](https://developer.algorand.org/docs/clis/goal/goal).
