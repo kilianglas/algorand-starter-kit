@@ -210,7 +210,7 @@ goal app optin --app-id <APP_ID> --from $ACC_[A|B|C]
 ```
 After the start of the voting period, registered accounts can vote "yes" or "no" using:
 ``` bash
-goal app call --from $ACC_[A|B|C] --app_id <APP_ID> --app-arg "str:[yes|no]"
+goal app call --from $ACC_[A|B|C] --app-id <APP_ID> --app-arg "str:[yes|no]"
 ```
 Voters can retract their vote by either submitting a close out or clear state call:
 ``` bash
