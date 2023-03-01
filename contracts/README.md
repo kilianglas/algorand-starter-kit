@@ -38,7 +38,7 @@ volumes:
       - source: path/to/this/dir 
       - target: /data
 ```
-Substitute *path/to/this/dir* with the path to this directory (on your machine).
+Substitute *path/to/this/dir* with the path to this repository (on your machine).
 Afterwards, the complete file should look something like this:
 
 ``` yaml
@@ -68,7 +68,7 @@ services:
       - ${CDT_PORT:-9392}:9392
     volumes:
       - type: bind
-        source: /home/username/algorand-starter-kit/contracts
+        source: /home/username/algorand-starter-kit
         target: /data
 ```
 The sandbox can be controlled by using the *sandbox* executable located at the root of the sandbox project.
