@@ -35,8 +35,8 @@ The volume has to be added to the *algod* service, e.g. below the ports section:
 ``` yaml
 volumes:
       - type: bind
-      - source: path/to/this/dir 
-      - target: /data
+        source: path/to/this/dir 
+        target: /data
 ```
 Substitute *path/to/this/dir* with the path to this directory (on your machine).
 Afterwards, the complete file should look something like this:
